@@ -2,6 +2,8 @@
 extern crate log;
 extern crate env_logger;
 
+use futures::future::FutureResult;
+use hyper::Chunk;
 use hyper::server::{Request, Response, Service};
 
 use futures::future::Future;
@@ -19,6 +21,11 @@ fn parse_form(form_chunk: Chunk) -> FutureResult<NewMessage, hyper::Error> {
         message: String::new(),
     })
 }
+
+fn write_to_db(entry: NewMessage) -> FutureResult<i64, hyper::Error> {
+    futures::future::ok(0)
+}
+
 
 
 impl Service for Microservice {
