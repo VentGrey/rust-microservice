@@ -26,7 +26,11 @@ fn write_to_db(entry: NewMessage) -> FutureResult<i64, hyper::Error> {
     futures::future::ok(0)
 }
 
-
+fn make_post_response(
+    result: Result<i64, hyper::Error>,
+) -> FutureResult<hyper::Response, hyper::Error> {
+    futures::future::ok(Response::new().with_status(StatusCode::NotFound))
+}
 
 impl Service for Microservice {
     type Request = Request;
