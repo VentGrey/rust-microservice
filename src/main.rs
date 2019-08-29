@@ -20,10 +20,22 @@ struct NewMessage {
 }
 
 fn parse_form(form_chunk: Chunk) -> FutureResult<NewMessage, hyper::Error> {
-    futures::future::ok(NewMessage {
-        username: String::new(),
-        message: String::new(),
-    })
+    let mut form = url::form_urlencoded::parse(form_chunk.as_ref())
+        .into_owned()
+        .collect::<HashMap<String, String>>();
+
+    if let Some(message) = form.remove("message") {
+        let username = form.remove("username").unwrap_or(String::from("anonymous"));
+        futures::future::ok(NewMessage {
+            username: username,
+            message: message,
+        })
+    } else {
+        futures::future::err(hyper::Error::from(io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "Missing Field Message",
+        )))
+    }
 }
 
 fn write_to_db(entry: NewMessage) -> FutureResult<i64, hyper::Error> {
