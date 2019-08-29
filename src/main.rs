@@ -19,3 +19,15 @@ impl Service for Microservice {
         Box::new(futures::future::ok(Response::new()))
     }
 }
+
+fn main() {
+    env_logger::init();
+
+    let addr = "127.0.0.1:8000".parse().unwrap();
+    let server = hyper::server::Http::new()
+        .bind(&addr, || Ok(Microservice{}))
+        .unwrap();
+
+    info!("Ejecutando microservicio en: {}", addr);
+    server.run().unwrap();
+}
