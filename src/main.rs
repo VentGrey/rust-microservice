@@ -2,11 +2,15 @@
 extern crate log;
 extern crate env_logger;
 
+use futures::stream::Stream;
 use futures::future::FutureResult;
 use hyper::Chunk;
 use hyper::server::{Request, Response, Service};
-
+use hyper::StatusCode;
 use futures::future::Future;
+use std::collections::HashMap;
+use std::io;
+
 
 struct Microservice;
 
