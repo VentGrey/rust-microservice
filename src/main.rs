@@ -15,7 +15,7 @@ impl Service for Microservice {
     type Future = Box<dyn Future<Item = Self::Response, Error = Self::Error>>;
 
     fn call(&self, request: Request) -> Self::Future {
-        info!("Microservice received a request: {:?}", request);
+        info!("El microservicio recibió la petición: {:?}", request);
         Box::new(futures::future::ok(Response::new()))
     }
 }
