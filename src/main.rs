@@ -22,7 +22,7 @@ impl Service for Microservice {
 
 fn main() {
     env_logger::init();
-    let address = "127.0.0.1:8080".parse().unwrap();
+    let address = "127.0.0.1:8000".parse().unwrap();
     let server = hyper::server::Http::new()
         .bind(&address, || Ok(Microservice {}))
         .unwrap();
