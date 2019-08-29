@@ -2,6 +2,9 @@
 extern crate log;
 extern crate env_logger;
 
+#[macro_use]
+extern crate serde_json;
+
 use futures::stream::Stream;
 use futures::future::FutureResult;
 use hyper::Chunk;
