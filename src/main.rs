@@ -8,6 +8,19 @@ use futures::future::Future;
 
 struct Microservice;
 
+struct NewMessage {
+    username: String,
+    message: String,
+}
+
+fn parse_form(form_chunk: Chunk) -> FutureResult<NewMessage, hyper::Error> {
+    futures::future::ok(NewMessage {
+        username: String::new(),
+        message: String::new(),
+    })
+}
+
+
 impl Service for Microservice {
     type Request = Request;
     type Response = Response;
