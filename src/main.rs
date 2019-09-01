@@ -5,6 +5,8 @@ extern crate env_logger;
 #[macro_use]
 extern crate serde_json;
 
+use hyper::header::ContentLength;
+use std::error::Error;
 use futures::stream::Stream;
 use futures::future::FutureResult;
 use hyper::Chunk;
@@ -41,6 +43,17 @@ fn parse_form(form_chunk: Chunk) -> FutureResult<NewMessage, hyper::Error> {
     }
 }
 
+fn make_error_response(error_message: &str) -> FutureResult<hyper::Response, hyper::Error> {
+    let payload = json!({"error": error_message}).to_string();
+    let response = Response::new()
+        .with_status(StatusCode::InternalServerError)
+        .with_header(ContentLength(payload.len() as u64))
+        .with_header(ContentType::json())
+        .with_body(payload);
+    debug!("{:?}", response);
+    futures::future::ok(response)
+}
+
 fn write_to_db(entry: NewMessage) -> FutureResult<i64, hyper::Error> {
     futures::future::ok(0)
 }
@@ -48,7 +61,19 @@ fn write_to_db(entry: NewMessage) -> FutureResult<i64, hyper::Error> {
 fn make_post_response(
     result: Result<i64, hyper::Error>,
 ) -> FutureResult<hyper::Response, hyper::Error> {
+    match result {
+        Ok(timestamp) => {
+            let payload = json!({"timestamp:":timestamp}).to_string();
+            let response = Response::new()
+                .with_header(ContentLength(payload.len() as u64))
+                .with_header(ContentType::json())
+                .with_body(payload);
 
+            debug!("{:?}", response);
+            futures::future::ok(response)
+        }
+        Err(error) => make_error_response(error.description()),
+    }
 }
 
 impl Service for Microservice {
