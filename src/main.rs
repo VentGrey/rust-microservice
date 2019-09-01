@@ -24,6 +24,11 @@ struct NewMessage {
     message: String,
 }
 
+struct TimeRange {
+    before: Option<i64>,
+    after: Option<i64>,
+}
+
 fn parse_form(form_chunk: Chunk) -> FutureResult<NewMessage, hyper::Error> {
     let mut form = url::form_urlencoded::parse(form_chunk.as_ref())
         .into_owned()
